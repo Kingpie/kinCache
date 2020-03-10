@@ -1,4 +1,4 @@
-package kinCache
+package cache
 
 //记录cache的内容
 type CacheValue struct {

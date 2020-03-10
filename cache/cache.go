@@ -1,4 +1,4 @@
-package kinCache
+package cache
 
 import (
 	"github.com/Kingpie/kinCache/lru"

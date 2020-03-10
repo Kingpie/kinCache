@@ -1,4 +1,4 @@
-package kinCache
+package cache
 
 //当缓存未击中，获取源数据
 type Getter interface {

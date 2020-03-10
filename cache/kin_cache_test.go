@@ -1,4 +1,4 @@
-package kinCache
+package cache
 
 import "testing"
 

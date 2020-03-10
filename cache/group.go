@@ -1,4 +1,4 @@
-package kinCache
+package cache
 
 import (
 	"fmt"
@@ -7,9 +7,9 @@ import (
 )
 
 type Group struct {
-	name      string
-	getter    Getter
-	mainCache cache
+	name      string //组名
+	getter    Getter //回调
+	mainCache cache  //缓存
 }
 
 var (
