@@ -10,12 +10,43 @@ type Group struct {
 	name      string //组名
 	getter    Getter //回调
 	mainCache cache  //缓存
+	peers     PeerPicker
 }
 
 var (
 	rw     sync.RWMutex
 	groups = make(map[string]*Group)
 )
+
+func (g *Group) RegisterPeers(peers PeerPicker) {
+	if g.peers != nil {
+		panic("Register called more than once")
+	}
+
+	g.peers = peers
+}
+
+func (g *Group) load(key string) (value CacheValue, err error) {
+	if g.peers != nil {
+		if peer, ok := g.peers.PickPeer(key); ok {
+			if value, err = g.getFromPeer(peer, key); err == nil {
+				return value, nil
+			}
+		}
+		log.Println("Failed to get from peer", err)
+	}
+
+	return g.getFromSrc(key)
+}
+
+func (g *Group) getFromPeer(peer PeerGetter, key string) (CacheValue, error) {
+	bytes, err := peer.Get(g.name, key)
+	if err != nil {
+		return CacheValue{}, err
+	}
+
+	return CacheValue{b: bytes}, nil
+}
 
 func NewGroup(name string, bytes int64, getter Getter) *Group {
 	if getter == nil {
@@ -53,10 +84,6 @@ func (g *Group) Get(key string) (CacheValue, error) {
 	}
 
 	return g.load(key)
-}
-
-func (g *Group) load(key string) (CacheValue, error) {
-	return g.getFromSrc(key)
 }
 
 //从源获取数据
