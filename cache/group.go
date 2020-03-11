@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"github.com/Kingpie/kinCache/single_flight"
 	"log"
 	"sync"
 )
@@ -11,6 +12,7 @@ type Group struct {
 	getter    Getter //回调
 	mainCache cache  //缓存
 	peers     PeerPicker
+	loader    *single_flight.Group //每个key同时只处理一个
 }
 
 var (
@@ -27,16 +29,25 @@ func (g *Group) RegisterPeers(peers PeerPicker) {
 }
 
 func (g *Group) load(key string) (value CacheValue, err error) {
-	if g.peers != nil {
-		if peer, ok := g.peers.PickPeer(key); ok {
-			if value, err = g.getFromPeer(peer, key); err == nil {
-				return value, nil
+	///每个key同时只处理一个请求
+	val, err := g.loader.Do(key, func() (interface{}, error) {
+		if g.peers != nil {
+			if peer, ok := g.peers.PickPeer(key); ok {
+				if value, err = g.getFromPeer(peer, key); err == nil {
+					return value, nil
+				}
 			}
+			log.Println("Failed to get from peer", err)
 		}
-		log.Println("Failed to get from peer", err)
+
+		return g.getFromSrc(key)
+	})
+
+	if err == nil {
+		return val.(CacheValue), nil
 	}
 
-	return g.getFromSrc(key)
+	return
 }
 
 func (g *Group) getFromPeer(peer PeerGetter, key string) (CacheValue, error) {
@@ -60,6 +71,7 @@ func NewGroup(name string, bytes int64, getter Getter) *Group {
 		name:      name,
 		getter:    getter,
 		mainCache: cache{cacheBytes: bytes},
+		loader:    &single_flight.Group{},
 	}
 
 	groups[name] = g
