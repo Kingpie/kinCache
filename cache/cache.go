@@ -8,7 +8,7 @@ import (
 type cache struct {
 	mtx        sync.Mutex
 	lru        *lru.Cache
-	cacheBytes int64
+	cacheBytes int64 //缓存大小
 }
 
 func (c *cache) add(key string, value CacheValue) {

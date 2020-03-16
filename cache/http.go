@@ -44,6 +44,7 @@ func (p *HTTPPool) Set(peers ...string) {
 	}
 }
 
+//选择节点
 func (p *HTTPPool) PickPeer(key string) (PeerGetter, bool) {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
