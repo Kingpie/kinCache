@@ -32,6 +32,7 @@ func startServer(addr string, addrs []string, group *cache.Group) {
 	log.Fatal(http.ListenAndServe(addr[7:], server))
 }
 
+//api server
 func startAPIServer(apiAddr string, group *cache.Group) {
 	http.Handle("/api", http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
