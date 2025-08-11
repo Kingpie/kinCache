@@ -14,6 +14,6 @@ func TestMap_AddNode(t *testing.T) {
 	testList := []string{"lala", "dada", "gaga", "mimi"}
 
 	for _, s := range testList {
-		t.Logf("%s local node:%s", s, m.Get(s))
+		t.Logf("%s local node:%s", s, m.GetNode(s))
 	}
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/Kingpie/kinCache/cache"
+	"kinCache/cache"
 	"log"
 	"net/http"
 )
@@ -12,6 +12,9 @@ var db = map[string]string{
 	"hehe": "1",
 	"haha": "2",
 	"lala": "3",
+	"lili": "4",
+	"cici": "5",
+	"gaga": "6",
 }
 
 func createGroup() *cache.Group {
@@ -32,7 +35,7 @@ func startServer(addr string, addrs []string, group *cache.Group) {
 	log.Fatal(http.ListenAndServe(addr[7:], server))
 }
 
-//api server
+// api server
 func startAPIServer(apiAddr string, group *cache.Group) {
 	http.Handle("/api", http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -73,5 +76,5 @@ func main() {
 		go startAPIServer(apiAddr, group)
 	}
 
-	startServer(addrMap[port], []string(addrs), group)
+	startServer(addrMap[port], addrs, group)
 }

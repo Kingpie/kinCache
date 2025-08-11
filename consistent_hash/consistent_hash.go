@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-//哈希算法
+// 哈希算法
 type Hash func(data []byte) uint32
 
 type Map struct {
@@ -29,7 +29,7 @@ func New(replicas int, fn Hash) *Map {
 	return m
 }
 
-//增加机器节点,生成replicas个虚拟节点
+// 增加机器节点,生成replicas个虚拟节点
 func (m *Map) AddNode(keys ...string) {
 	for _, key := range keys {
 		for i := 0; i < m.replicas; i++ {
@@ -41,8 +41,8 @@ func (m *Map) AddNode(keys ...string) {
 	sort.Ints(m.keys)
 }
 
-//寻找最近的节点
-func (m *Map) Get(key string) string {
+// 寻找最近的节点
+func (m *Map) GetNode(key string) string {
 	if len(m.keys) == 0 {
 		return ""
 	}

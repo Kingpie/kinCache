@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/Kingpie/kinCache/lru"
+	"kinCache/lru"
 	"sync"
 )
 
